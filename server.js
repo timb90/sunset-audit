@@ -79,7 +79,7 @@ app.post('/api/search', async (req, res) => {
   try {
     const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 1500, system: 'Return ONLY a valid JSON array. No markdown.', messages: [{ role: 'user', content: 'List 12 SMALL independent ' + industry + ' businesses in ' + location + ', Mexico with websites. EXCLUDE big chains, international brands, resorts. Focus on local family-owned small businesses. JSON: [{name,url,industry,location}]' }] });
     const text = msg.content.map(c=>c.text||'').join('').trim().replace(/```json|```/g,'');
-    const parsed = JSON.parse(text.match(/\[\s\S]*\]/)[0]);
+    const parsed = JSON.parse(text.match(/\[[\s\S]*\]/)[0]);
     const prefs = readPrefs(); const now = Date.now();
     const results = parsed
       .filter(b => { const p = prefs[b.url]; return !(p && p.verdict === 'not_good' && (now - p.date) < 30*24*60*60*1000); })
