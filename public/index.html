@@ -228,7 +228,7 @@ const DARK_STYLE = [{elementType:"geometry",stylers:[{color:"#1B2A4A"}]},{elemen
 async function initMap() {
   // Get API key from backend
   const cfg = await fetch('/api/config').then(r=>r.json()).catch(()=>({mapsKey:''}));
-  if (!cfg.mapsKey) { document.getElementById('gmap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px">Map unavailable — add GOOGLE_MAPS_KEY to Railway variables</div>'; return; }
+  if (!cfg.mapsKey) { document.getElementById('gmap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px">Map unavailable - add GOOGLE_MAPS_KEY to Railway variables</div>'; return; }
 
   // Load Google Maps script dynamically
   await new Promise((resolve, reject) => {
