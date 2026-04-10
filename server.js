@@ -212,6 +212,7 @@ Tone: confident, warm, not salesy. ~400 words. Ready to send — no placeholders
 });
 
 // ── DATA endpoints ──
+app.get('/api/config', (req, res) => res.json({ mapsKey: process.env.GOOGLE_MAPS_KEY || '' }));
 app.get('/api/businesses', (req, res) => res.json(readDB()));
 app.get('/api/businesses/:id', (req, res) => {
   const biz = readDB().find(b => b.id === req.params.id);
