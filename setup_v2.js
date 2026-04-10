@@ -1,4 +1,9 @@
-require('dotenv').config();
+const fs = require('fs');
+if (!fs.existsSync('public')) fs.mkdirSync('public');
+if (!fs.existsSync('data')) fs.mkdirSync('data');
+
+// ── SERVER.JS ──
+fs.writeFileSync('server.js', `require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -78,8 +83,8 @@ app.post('/api/search', async (req, res) => {
 
   try {
     const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 1500, system: 'Return ONLY a valid JSON array. No markdown.', messages: [{ role: 'user', content: 'List 12 SMALL independent ' + industry + ' businesses in ' + location + ', Mexico with websites. EXCLUDE big chains, international brands, resorts. Focus on local family-owned small businesses. JSON: [{name,url,industry,location}]' }] });
-    const text = msg.content.map(c=>c.text||'').join('').trim().replace(/```json|```/g,'');
-    const parsed = JSON.parse(text.match(/\[\s\S]*\]/)[0]);
+    const text = msg.content.map(c=>c.text||'').join('').trim().replace(/\`\`\`json|\`\`\`/g,'');
+    const parsed = JSON.parse(text.match(/\\[\\s\\S]*\\]/)[0]);
     const prefs = readPrefs(); const now = Date.now();
     const results = parsed
       .filter(b => { const p = prefs[b.url]; return !(p && p.verdict === 'not_good' && (now - p.date) < 30*24*60*60*1000); })
@@ -93,11 +98,11 @@ app.post('/api/audit/:id', async (req, res) => {
   const db = readDB(); const biz = db.find(b => b.id === req.params.id);
   if (!biz) return res.status(404).json({ error: 'Not found' });
   let siteContent = '';
-  try { const resp = await axios.get(biz.url, { timeout: 8000, headers: { 'User-Agent': 'Mozilla/5.0' } }); const cheerio = require('cheerio'); const $ = cheerio.load(resp.data); $('script,style,img,svg,nav,footer').remove(); siteContent = $('body').text().replace(/\s+/g,' ').slice(0,3000); } catch { siteContent = 'Could not fetch. Domain: ' + biz.url + ', Type: ' + biz.industry; }
+  try { const resp = await axios.get(biz.url, { timeout: 8000, headers: { 'User-Agent': 'Mozilla/5.0' } }); const cheerio = require('cheerio'); const $ = cheerio.load(resp.data); $('script,style,img,svg,nav,footer').remove(); siteContent = $('body').text().replace(/\\s+/g,' ').slice(0,3000); } catch { siteContent = 'Could not fetch. Domain: ' + biz.url + ', Type: ' + biz.industry; }
   try {
-    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion and UX expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' business website: ' + biz.url + '\nBusiness: ' + biz.name + '\nContent: ' + siteContent + '\n\nReturn ONLY this JSON structure:\n{"overall_score":0,"size_assessment":"small/medium/large chain - only audit small-medium independents","summary":"2-3 sentences on how weaknesses hurt revenue","revenue_impact":"specific estimate of lost leads/revenue","recommended_package":"starter|growth|premium|custom","package_reasoning":"1 sentence why this package fits","scores":{"ux_ui":0,"lead_generation":0,"navigation":0,"mobile":0},"findings":[{"title":"string","priority":"high","description":"actionable finding with revenue impact"}]}\n\nPackage guide: starter=$12k-18k MXN (simple sites needing refresh), growth=$25k-40k MXN (needs booking/integration), premium=$50k-80k MXN (full custom build), custom=TBC (complex booking systems or multi-location).\nScores 0-100, priority=high/medium/low, 5-7 findings.' }] });
+    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion and UX expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' business website: ' + biz.url + '\\nBusiness: ' + biz.name + '\\nContent: ' + siteContent + '\\n\\nReturn ONLY this JSON structure:\\n{"overall_score":0,"size_assessment":"small/medium/large chain - only audit small-medium independents","summary":"2-3 sentences on how weaknesses hurt revenue","revenue_impact":"specific estimate of lost leads/revenue","recommended_package":"starter|growth|premium|custom","package_reasoning":"1 sentence why this package fits","scores":{"ux_ui":0,"lead_generation":0,"navigation":0,"mobile":0},"findings":[{"title":"string","priority":"high","description":"actionable finding with revenue impact"}]}\\n\\nPackage guide: starter=$12k-18k MXN (simple sites needing refresh), growth=$25k-40k MXN (needs booking/integration), premium=$50k-80k MXN (full custom build), custom=TBC (complex booking systems or multi-location).\\nScores 0-100, priority=high/medium/low, 5-7 findings.' }] });
     const text = msg.content.filter(c=>c.type==='text').map(c=>c.text).join('').trim();
-    const match = text.replace(/```json|```/g,'').match(/\{[\s\S]*\}/);
+    const match = text.replace(/\`\`\`json|\`\`\`/g,'').match(/\\{[\\s\\S]*\\}/);
     if (!match) throw new Error('No JSON');
     const audit = JSON.parse(match[0]);
     res.json(upsertBusiness({ ...biz, audit, status: audit.overall_score<=50?'weak':'ok', auditedAt: new Date().toISOString() }));
@@ -108,9 +113,9 @@ app.post('/api/proposal/:id', async (req, res) => {
   const { language = 'English' } = req.body; const db = readDB(); const biz = db.find(b=>b.id===req.params.id);
   if (!biz || !biz.audit) return res.status(400).json({ error: 'Audit required first' });
   const pkg = PACKAGES[biz.audit.recommended_package] || PACKAGES.growth;
-  const findings = biz.audit.findings.map(f=>'- [' + f.priority.toUpperCase() + '] ' + f.title + ': ' + f.description).join('\n');
+  const findings = biz.audit.findings.map(f=>'- [' + f.priority.toUpperCase() + '] ' + f.title + ': ' + f.description).join('\\n');
   try {
-    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 1500, messages: [{ role: 'user', content: 'Write a professional web proposal in ' + language + ' from Sunset Web Studio, a boutique web agency in Puerto Vallarta (hello@sunsetwebstudio.mx).\n\nClient: ' + biz.name + ' | Industry: ' + biz.industry + ' | Current score: ' + biz.audit.overall_score + '/100\nSummary: ' + biz.audit.summary + '\nRevenue impact: ' + biz.audit.revenue_impact + '\nFindings:\n' + findings + '\n\nRecommended package: ' + pkg.name + ' (' + pkg.range + ', ' + pkg.timeline + ')\nPackage reasoning: ' + (biz.audit.package_reasoning||'') + '\nPackage includes: ' + pkg.features.join(', ') + '\n\nStructure the proposal as:\n1. Personalised opening referencing their specific situation\n2. What their current website is costing them (use revenue_impact)\n3. Key findings (list the top 3-4 with impact)\n4. Our recommended solution with package details and investment range\n5. Timeline\n6. Clear CTA\n\nTone: warm, confident, not salesy. ~450 words. No placeholders. Plain text with short bold headings.' }] });
+    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 1500, messages: [{ role: 'user', content: 'Write a professional web proposal in ' + language + ' from Sunset Web Studio, a boutique web agency in Puerto Vallarta (hello@sunsetwebstudio.mx).\\n\\nClient: ' + biz.name + ' | Industry: ' + biz.industry + ' | Current score: ' + biz.audit.overall_score + '/100\\nSummary: ' + biz.audit.summary + '\\nRevenue impact: ' + biz.audit.revenue_impact + '\\nFindings:\\n' + findings + '\\n\\nRecommended package: ' + pkg.name + ' (' + pkg.range + ', ' + pkg.timeline + ')\\nPackage reasoning: ' + (biz.audit.package_reasoning||'') + '\\nPackage includes: ' + pkg.features.join(', ') + '\\n\\nStructure the proposal as:\\n1. Personalised opening referencing their specific situation\\n2. What their current website is costing them (use revenue_impact)\\n3. Key findings (list the top 3-4 with impact)\\n4. Our recommended solution with package details and investment range\\n5. Timeline\\n6. Clear CTA\\n\\nTone: warm, confident, not salesy. ~450 words. No placeholders. Plain text with short bold headings.' }] });
     const proposal = msg.content.map(c=>c.text||'').join('').trim();
     res.json({ proposal, package: pkg, business: upsertBusiness({ ...biz, proposal, proposalGeneratedAt: new Date().toISOString() }) });
   } catch(e) { res.status(500).json({ error: e.message }); }
@@ -137,3 +142,6 @@ app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }
 app.get('/{*splat}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => console.log('Sunset Audit Tool running at http://localhost:' + PORT));
+`);
+console.log('server.js written:', fs.statSync('server.js').size, 'bytes');
+console.log('Run: git add . && git commit -m "feat: boutique filter, pricing packages, good/not good verdict" && git push');
