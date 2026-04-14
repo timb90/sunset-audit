@@ -220,4 +220,5 @@ app.delete('/api/businesses/:id', (req, res) => { writeDB(readDB().filter(b=>b.i
 app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }); });
 app.get('/{*splat}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 const PORT = process.env.PORT || 3333;
+console.log('ENV CHECK - GOOGLE_MAPS_KEY:', process.env.GOOGLE_MAPS_KEY ? 'SET ('+process.env.GOOGLE_MAPS_KEY.slice(0,8)+'...)' : 'EMPTY');
 app.listen(PORT, () => console.log('Sunset Audit Tool running at http://localhost:' + PORT));
