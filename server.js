@@ -112,6 +112,36 @@ app.post('/api/search', async (req, res) => {
   const searchLat = searchGeo ? searchGeo.lat : 20.6534;
   const searchLng = searchGeo ? searchGeo.lng : -105.2253;
 
+  // Try Places API first for accurate business websites
+  if (process.env.GOOGLE_MAPS_KEY) {
+    try {
+      const placeType = { Hotels:'lodging', Restaurants:'restaurant', Gyms:'gym', Legal:'lawyer', 'Real Estate':'real_estate_agency', Veterinary:'veterinary_care', Transport:'transit_station', Tourism:'tourist_attraction', Other:'establishment' }[industry] || 'establishment';
+      const nearbyResp = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
+        params: { key: process.env.GOOGLE_MAPS_KEY, location: searchLat+','+searchLng, radius: radius*1000, type: placeType, keyword: industry }
+      });
+      const places = (nearbyResp.data.results || []).filter(p => p.business_status === 'OPERATIONAL').slice(0, 12);
+      if (places.length > 0) {
+        const results = [];
+        for (const place of places) {
+          try {
+            const det = await axios.get('https://maps.googleapis.com/maps/api/place/details/json', {
+              params: { key: process.env.GOOGLE_MAPS_KEY, place_id: place.place_id, fields: 'name,website,formatted_address,rating' }
+            });
+            const d = det.data.result || {};
+            if (!d.website) continue;
+            const p = prefs[d.website];
+            if (p && p.verdict === 'not_good' && (now - p.date) < 30*24*60*60*1000) continue;
+            results.push({ id: Buffer.from(d.website+Math.random()).toString('base64').slice(0,20).replace(/[^a-zA-Z0-9]/g,'x'), name: d.name||place.name, url: d.website, industry, location: d.formatted_address||location, searchLat, searchLng, radius, status: 'pending', addedAt: new Date().toISOString() });
+          } catch(e) {}
+        }
+        if (results.length > 0) {
+          results.forEach(upsertBusiness);
+          return res.json({ results, source: 'places', searchLat, searchLng });
+        }
+      }
+    } catch(e) { console.log('Places API error:', e.message); }
+  }
+
   if (process.env.GOOGLE_API_KEY && process.env.GOOGLE_CX) {
     try {
       const allResults = []; const seenUrls = new Set();
