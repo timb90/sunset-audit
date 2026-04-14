@@ -6,12 +6,7 @@
 <title>Sunset Web Studio — Lead Audit Tool</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --coral:#D85A30;--navy:#1B2A4A;--bg:#0F1A2E;--surface:#162236;--surface2:#1E2F47;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
-  --text:#E8EDF5;--text2:#8FA3C0;--text3:#5A7090;
-  --green:#1D9E75;--amber:#D4901A;--red:#D84444;--radius:10px;--radius-sm:6px;
-}
+:root{--coral:#D85A30;--navy:#1B2A4A;--bg:#0F1A2E;--surface:#162236;--surface2:#1E2F47;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--text:#E8EDF5;--text2:#8FA3C0;--text3:#5A7090;--green:#1D9E75;--amber:#D4901A;--red:#D84444;--radius:10px;--radius-sm:6px;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
 .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh;}
 .sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;position:sticky;top:0;}
@@ -25,27 +20,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ind-btn:hover{border-color:var(--coral);color:var(--text);}
 .ind-btn.active{background:rgba(216,90,48,0.15);border-color:var(--coral);color:var(--coral);}
 .location-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;color:var(--text);font-size:13px;outline:none;}
-.location-input:focus{border-color:var(--coral);}
 .radius-row{display:flex;align-items:center;gap:10px;margin-top:10px;}
 .radius-row label{font-size:12px;color:var(--text3);white-space:nowrap;}
 .radius-row input[type=range]{flex:1;accent-color:var(--coral);}
 .radius-val{font-size:12px;font-weight:600;color:var(--coral);min-width:36px;text-align:right;}
-.search-btn{width:100%;background:var(--coral);border:none;border-radius:var(--radius-sm);padding:10px;color:white;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;transition:opacity 0.15s;}
-.search-btn:hover{opacity:0.9;}
+.search-btn{width:100%;background:var(--coral);border:none;border-radius:var(--radius-sm);padding:10px;color:white;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;}
 .search-btn:disabled{opacity:0.5;cursor:not-allowed;}
 .stats{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-bottom:1px solid var(--border);}
 .stat{text-align:center;}
 .stat-num{font-size:20px;font-weight:700;}
 .stat-num.red{color:var(--red);}
 .stat-label{font-size:10px;color:var(--text3);margin-top:2px;}
-.filter-tabs{padding:10px 16px;display:flex;gap:6px;border-bottom:1px solid var(--border);}
-.ftab{background:none;border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.filter-tabs{padding:10px 16px;display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.ftab{background:none;border:1px solid var(--border);border-radius:20px;padding:4px 9px;font-size:11px;color:var(--text3);cursor:pointer;}
 .ftab.active{background:rgba(216,90,48,0.15);border-color:var(--coral);color:var(--coral);}
 .biz-list{flex:1;overflow-y:auto;}
-.biz-item{padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+.biz-item{padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;}
 .biz-item:hover{background:var(--surface2);}
 .biz-item.active{background:rgba(216,90,48,0.1);border-left:3px solid var(--coral);}
-.biz-item-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.biz-item-name{font-size:13px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .biz-item-meta{display:flex;justify-content:space-between;align-items:center;}
 .biz-item-ind{font-size:11px;color:var(--text3);}
 .score-pill{font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;}
@@ -53,14 +46,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .score-pill.ok{background:rgba(29,158,117,0.2);color:var(--green);}
 .score-pill.pending{background:rgba(143,163,192,0.1);color:var(--text3);}
 .main{display:flex;flex-direction:column;min-height:100vh;}
-.main-header{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.main-header{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .main-header h1{font-size:18px;font-weight:600;}
 .main-header p{font-size:12px;color:var(--text2);margin-top:2px;}
 .header-actions{display:flex;gap:8px;}
-.btn{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 14px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.15s;}
-.btn:hover{border-color:var(--border2);color:var(--text);}
+.btn{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 14px;font-size:12px;color:var(--text2);cursor:pointer;}
 .btn.primary{background:var(--coral);border-color:var(--coral);color:white;font-weight:600;}
-.btn.primary:hover{opacity:0.9;}
 .btn:disabled{opacity:0.4;cursor:not-allowed;}
 .map-container{position:relative;height:360px;flex-shrink:0;border-bottom:1px solid var(--border);}
 #gmap{width:100%;height:100%;}
@@ -79,7 +70,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .detail-title h2{font-size:20px;font-weight:600;}
 .detail-title .meta{font-size:12px;color:var(--text3);margin-top:3px;}
 .detail-title a{font-size:12px;color:var(--coral);text-decoration:none;display:block;margin-top:2px;}
-.detail-actions{display:flex;gap:8px;flex-shrink:0;}
+.detail-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
 .score-overview{display:grid;grid-template-columns:90px 1fr;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;align-items:center;}
 .big-score{text-align:center;}
 .big-score-num{font-size:48px;font-weight:700;line-height:1;}
@@ -91,12 +82,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .score-bar-val{font-size:12px;font-weight:600;text-align:right;}
 .score-bar-track{background:var(--surface2);border-radius:4px;height:5px;overflow:hidden;}
 .score-bar-fill{height:100%;border-radius:4px;}
-.summary-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;}
-.summary-box h3{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.summary-box,.revenue-impact,.pkg-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;}
+.revenue-impact{background:rgba(216,90,48,0.08);border-color:rgba(216,90,48,0.2);}
+.pkg-box{background:rgba(27,42,74,0.5);border-color:var(--border2);}
+.summary-box h3,.revenue-impact h3,.pkg-box h3{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.revenue-impact h3{color:var(--coral);}
+.pkg-box h3{color:var(--text2);}
 .summary-box p{font-size:13px;color:var(--text2);line-height:1.7;}
-.revenue-impact{background:rgba(216,90,48,0.08);border:1px solid rgba(216,90,48,0.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;}
-.revenue-impact h3{font-size:10px;font-weight:600;color:var(--coral);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;}
-.revenue-impact p{font-size:13px;color:var(--text);line-height:1.6;}
+.revenue-impact p,.pkg-box p{font-size:13px;color:var(--text);line-height:1.6;}
 .findings-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
 .finding{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;}
 .finding-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;}
@@ -106,10 +99,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .priority-badge.medium{background:rgba(212,144,26,0.2);color:var(--amber);}
 .priority-badge.low{background:rgba(29,158,117,0.2);color:var(--green);}
 .finding-desc{padding:0 14px 12px;font-size:13px;color:var(--text2);line-height:1.6;}
+.verdict-bar{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.verdict-bar .btn{flex:1;text-align:center;}
 .proposal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;white-space:pre-wrap;font-size:13px;line-height:1.8;}
 .proposal-actions{display:flex;gap:8px;margin-top:10px;}
 .loading{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:13px;padding:20px 0;}
-.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--coral);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--coral);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .tab-row{display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:10px;}
 .tab{background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;padding:4px 0;position:relative;}
@@ -124,476 +119,335 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .bulk-bar p span{color:var(--coral);font-weight:600;}
 .progress-bar{background:var(--surface2);border-radius:4px;height:5px;flex:1;max-width:180px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--coral);border-radius:4px;transition:width 0.3s;}
-
-/* Google Maps dark style override */
-.gm-style .gm-style-iw-c{background:#1E2F47!important;border:1px solid rgba(255,255,255,0.1)!important;box-shadow:none!important;}
-.gm-style .gm-style-iw-d{color:#E8EDF5!important;}
-.gm-style .gm-style-iw-tc::after{background:#1E2F47!important;}
-.gm-ui-hover-effect>span{background:#8FA3C0!important;}
 </style>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="brand">Sunset Web Studio</div>
-      <div class="tagline">Lead Audit Tool</div>
-    </div>
-    <div class="sidebar-section">
-      <h3>Industry</h3>
-      <div class="industry-grid">
-        <button class="ind-btn active" data-ind="Hotels" onclick="selectIndustry(this)">Hotels</button>
-        <button class="ind-btn" data-ind="Restaurants" onclick="selectIndustry(this)">Restaurants</button>
-        <button class="ind-btn" data-ind="Gyms" onclick="selectIndustry(this)">Gyms</button>
-        <button class="ind-btn" data-ind="Legal" onclick="selectIndustry(this)">Legal</button>
-        <button class="ind-btn" data-ind="Real Estate" onclick="selectIndustry(this)">Real Estate</button>
-        <button class="ind-btn" data-ind="Veterinary" onclick="selectIndustry(this)">Veterinary</button>
-      </div>
-    </div>
-    <div class="sidebar-section">
-      <h3>Location</h3>
-      <input type="text" class="location-input" id="location-input" value="Puerto Vallarta" placeholder="City or area"/>
-      <div class="radius-row">
-        <label>Radius</label>
-        <input type="range" id="radius-slider" min="1" max="50" value="10" oninput="updateRadius(this.value)"/>
-        <span class="radius-val" id="radius-val">10 km</span>
-      </div>
-      <button class="search-btn" id="search-btn" onclick="runSearch()">Search businesses</button>
-    </div>
-    <div class="stats">
-      <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Found</div></div>
-      <div class="stat"><div class="stat-num" id="stat-audited">0</div><div class="stat-label">Audited</div></div>
-      <div class="stat"><div class="stat-num red" id="stat-weak">0</div><div class="stat-label">Leads</div></div>
-    </div>
-    <div class="filter-tabs">
-      <button class="ftab active" onclick="setFilter('all',this)">All</button>
-      <button class="ftab" onclick="setFilter('weak',this)">Leads</button>
-      <button class="ftab" onclick="setFilter('pending',this)">Pending</button>
-    </div>
-    <div class="biz-list" id="biz-list"></div>
-  </aside>
-
-  <main class="main">
-    <div class="main-header">
-      <div>
-        <h1 id="main-title">Lead Audit Tool</h1>
-        <p id="main-subtitle">Search businesses, audit websites, generate proposals.</p>
-      </div>
-      <div class="header-actions">
-        <button class="btn" id="audit-all-btn" onclick="auditAll()" style="display:none">Audit all pending</button>
-        <button class="btn" onclick="clearAll()" style="color:var(--red)">Clear all</button>
-      </div>
-    </div>
-
-    <div class="map-container">
-      <div id="gmap"></div>
-      <div class="map-overlay">
-        Radius: <span id="map-radius-label">10 km</span> &nbsp;·&nbsp; <span id="map-count">0 businesses</span>
-      </div>
-      <div class="map-toggle">
-        <button id="btn-roadmap" class="active" onclick="setMapType('roadmap',this)">Map</button>
-        <button id="btn-satellite" onclick="setMapType('hybrid',this)">Satellite</button>
-      </div>
-    </div>
-
-    <div class="content" id="main-content">
-      <div class="empty-state">
-        <div class="icon">🌅</div>
-        <h2>Ready to find leads</h2>
-        <p>Select an industry, set your search radius, and hit Search. Results appear on the map and in the sidebar.</p>
-      </div>
-    </div>
-  </main>
+<aside class="sidebar">
+<div class="sidebar-logo"><div class="brand">Sunset Web Studio</div><div class="tagline">Lead Audit Tool</div></div>
+<div class="sidebar-section">
+<h3>Industry</h3>
+<div class="industry-grid">
+<button class="ind-btn active" data-ind="Hotels" onclick="selectIndustry(this)">Hotels</button>
+<button class="ind-btn" data-ind="Restaurants" onclick="selectIndustry(this)">Restaurants</button>
+<button class="ind-btn" data-ind="Gyms" onclick="selectIndustry(this)">Gyms</button>
+<button class="ind-btn" data-ind="Legal" onclick="selectIndustry(this)">Legal</button>
+<button class="ind-btn" data-ind="Real Estate" onclick="selectIndustry(this)">Real Estate</button>
+<button class="ind-btn" data-ind="Veterinary" onclick="selectIndustry(this)">Veterinary</button>
 </div>
-
+</div>
+<div class="sidebar-section">
+<h3>Location</h3>
+<input type="text" class="location-input" id="location-input" value="Puerto Vallarta" placeholder="City or area"/>
+<div class="radius-row"><label>Radius</label><input type="range" id="radius-slider" min="1" max="50" value="10" oninput="updateRadius(this.value)"/><span class="radius-val" id="radius-val">10 km</span></div>
+<button class="search-btn" id="search-btn" onclick="runSearch()">Search businesses</button>
+</div>
+<div class="stats">
+<div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Found</div></div>
+<div class="stat"><div class="stat-num" id="stat-audited">0</div><div class="stat-label">Audited</div></div>
+<div class="stat"><div class="stat-num red" id="stat-weak">0</div><div class="stat-label">Leads</div></div>
+</div>
+<div class="filter-tabs">
+<button class="ftab active" onclick="setFilter('all',this)">All</button>
+<button class="ftab" onclick="setFilter('weak',this)">Leads</button>
+<button class="ftab" onclick="setFilter('pending',this)">Pending</button>
+<button class="ftab" onclick="setFilter('saved',this)">&#9733; Saved</button>
+</div>
+<div class="biz-list" id="biz-list"></div>
+</aside>
+<main class="main">
+<div class="main-header">
+<div><h1 id="main-title">Lead Audit Tool</h1><p id="main-subtitle">Search businesses, audit websites, generate proposals.</p></div>
+<div class="header-actions">
+<button class="btn" id="audit-all-btn" onclick="auditAll()" style="display:none">Audit all pending</button>
+<button class="btn" onclick="clearAll()" style="color:var(--red)">Clear all</button>
+</div>
+</div>
+<div class="map-container">
+<div id="gmap"></div>
+<div class="map-overlay">Radius: <span id="map-radius-label">10 km</span> &nbsp;·&nbsp; <span id="map-count">0 businesses</span></div>
+<div class="map-toggle">
+<button class="active" onclick="setMapType('roadmap',this)">Map</button>
+<button onclick="setMapType('hybrid',this)">Satellite</button>
+</div>
+</div>
+<div class="content" id="main-content">
+<div class="empty-state"><div class="icon">&#127749;</div><h2>Ready to find leads</h2><p>Select an industry, set your radius, and hit Search.</p></div>
+</div>
+</main>
+</div>
 <script>
-const API = '';
-let businesses = [];
-let selectedId = null;
-let selectedIndustry = 'Hotels';
-let activeFilter = 'all';
-let activeTab = 'audit';
-let proposalLang = 'English';
-let bulkRunning = false;
-let searchRadius = 10;
-let gmap = null;
-let radiusCircle = null;
-let mapMarkers = [];
-let infoWindow = null;
-const PV = { lat: 20.6534, lng: -105.2253 };
+var API='',businesses=[],selectedId=null,selectedIndustry='Hotels',activeFilter='all',activeTab='audit',proposalLang='English',bulkRunning=false,searchRadius=10;
+var gmap=null,radiusCircle=null,mapMarkers=[],infoWindow=null;
+var PV={lat:20.6534,lng:-105.2253};
+var DARK=[{elementType:"geometry",stylers:[{color:"#1B2A4A"}]},{elementType:"labels.text.stroke",stylers:[{color:"#0F1A2E"}]},{elementType:"labels.text.fill",stylers:[{color:"#8FA3C0"}]},{featureType:"road",elementType:"geometry",stylers:[{color:"#243860"}]},{featureType:"road.highway",elementType:"geometry",stylers:[{color:"#2C4270"}]},{featureType:"water",elementType:"geometry",stylers:[{color:"#0F1A2E"}]}];
 
-// Dark map style
-const DARK_STYLE = [{elementType:"geometry",stylers:[{color:"#1B2A4A"}]},{elementType:"labels.text.stroke",stylers:[{color:"#0F1A2E"}]},{elementType:"labels.text.fill",stylers:[{color:"#8FA3C0"}]},{featureType:"road",elementType:"geometry",stylers:[{color:"#243860"}]},{featureType:"road.highway",elementType:"geometry",stylers:[{color:"#2C4270"}]},{featureType:"water",elementType:"geometry",stylers:[{color:"#0F1A2E"}]}];
-
-async function initMap() {
-  // Get API key from backend
-  const cfg = await fetch('/api/config').then(r=>r.json()).catch(()=>({mapsKey:''}));
-  if (!cfg.mapsKey) { document.getElementById('gmap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px">Map unavailable - add GOOGLE_MAPS_KEY to Railway variables</div>'; return; }
-
-  // Load Google Maps script dynamically
-  await new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${cfg.mapsKey}&libraries=places`;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-
-  gmap = new google.maps.Map(document.getElementById('gmap'), {
-    center: PV, zoom: 13,
-    styles: DARK_STYLE,
-    disableDefaultUI: false,
-    zoomControl: true,
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: false
-  });
-
-  // Center marker
-  new google.maps.Marker({
-    position: PV, map: gmap,
-    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 6, fillColor: '#D85A30', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2 }
-  });
-
-  // Radius circle
-  radiusCircle = new google.maps.Circle({
-    map: gmap, center: PV, radius: searchRadius * 1000,
-    strokeColor: '#D85A30', strokeOpacity: 0.8, strokeWeight: 2,
-    fillColor: '#D85A30', fillOpacity: 0.06
-  });
-
-  infoWindow = new google.maps.InfoWindow();
-  loadBusinesses();
+function initMap(){
+  fetch('/api/config').then(function(r){return r.json();}).then(function(cfg){
+    if(!cfg.mapsKey){
+      document.getElementById('gmap').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px">Map unavailable - add GOOGLE_MAPS_KEY to Railway</div>';
+      loadBusinesses();return;
+    }
+    var s=document.createElement('script');
+    s.src='https://maps.googleapis.com/maps/api/js?key='+cfg.mapsKey+'&libraries=places';
+    s.onload=function(){
+      gmap=new google.maps.Map(document.getElementById('gmap'),{center:PV,zoom:13,styles:DARK,zoomControl:true,mapTypeControl:false,streetViewControl:false,fullscreenControl:false});
+      new google.maps.Marker({position:PV,map:gmap,icon:{path:google.maps.SymbolPath.CIRCLE,scale:6,fillColor:'#D85A30',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}});
+      radiusCircle=new google.maps.Circle({map:gmap,center:PV,radius:searchRadius*1000,strokeColor:'#D85A30',strokeOpacity:0.8,strokeWeight:2,fillColor:'#D85A30',fillOpacity:0.06});
+      infoWindow=new google.maps.InfoWindow();
+      loadBusinesses();
+    };
+    document.head.appendChild(s);
+  }).catch(function(){loadBusinesses();});
 }
 
-function setMapType(type, btn) {
-  if (!gmap) return;
-  if (type === 'roadmap') { gmap.setMapTypeId('roadmap'); gmap.setOptions({ styles: DARK_STYLE }); }
-  else { gmap.setMapTypeId('hybrid'); gmap.setOptions({ styles: [] }); }
-  document.querySelectorAll('.map-toggle button').forEach(b => b.classList.remove('active'));
+function setMapType(type,btn){
+  if(!gmap)return;
+  if(type==='roadmap'){gmap.setMapTypeId('roadmap');gmap.setOptions({styles:DARK});}
+  else{gmap.setMapTypeId('hybrid');gmap.setOptions({styles:[]});}
+  document.querySelectorAll('.map-toggle button').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
 }
 
-function updateRadius(val) {
-  searchRadius = parseInt(val);
-  document.getElementById('radius-val').textContent = val + ' km';
-  document.getElementById('map-radius-label').textContent = val + ' km';
-  if (radiusCircle) radiusCircle.setRadius(searchRadius * 1000);
+function updateRadius(val){
+  searchRadius=parseInt(val);
+  document.getElementById('radius-val').textContent=val+' km';
+  document.getElementById('map-radius-label').textContent=val+' km';
+  if(radiusCircle)radiusCircle.setRadius(searchRadius*1000);
 }
 
-function plotBusinesses() {
-  mapMarkers.forEach(m => m.setMap(null));
-  mapMarkers = [];
-  if (!gmap) return;
-
-  businesses.forEach(b => {
-    // Geocode if no lat/lng — use PV center with slight offset
-    const lat = b.lat || PV.lat + (Math.random() - 0.5) * 0.04;
-    const lng = b.lng || PV.lng + (Math.random() - 0.5) * 0.06;
-    const score = b.audit ? b.audit.overall_score : null;
-    const color = b.status === 'weak' ? '#D84444' : b.status === 'ok' ? '#1D9E75' : '#8FA3C0';
-    const label = score !== null ? String(score) : '?';
-
-    const marker = new google.maps.Marker({
-      position: { lat, lng }, map: gmap,
-      label: { text: label, color: '#fff', fontSize: '10px', fontWeight: '700' },
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 14, fillColor: color, fillOpacity: 0.95,
-        strokeColor: '#fff', strokeWeight: 1.5
-      },
-      title: b.name
+function plotBusinesses(){
+  mapMarkers.forEach(function(m){m.setMap(null);});mapMarkers=[];
+  if(!gmap)return;
+  businesses.forEach(function(b){
+    var lat=b.lat||PV.lat+(Math.random()-0.5)*0.04;
+    var lng=b.lng||PV.lng+(Math.random()-0.5)*0.06;
+    var score=b.audit?b.audit.overall_score:null;
+    var color=b.status==='weak'?'#D84444':b.status==='ok'?'#1D9E75':'#8FA3C0';
+    var marker=new google.maps.Marker({position:{lat:lat,lng:lng},map:gmap,label:{text:score!==null?String(score):'?',color:'#fff',fontSize:'10px',fontWeight:'700'},icon:{path:google.maps.SymbolPath.CIRCLE,scale:14,fillColor:color,fillOpacity:0.95,strokeColor:'#fff',strokeWeight:1.5},title:b.name});
+    marker.addListener('click',function(){
+      infoWindow.setContent('<div style="color:#E8EDF5;font-family:-apple-system,sans-serif;padding:4px;min-width:160px"><div style="font-weight:600;font-size:13px;margin-bottom:3px">'+b.name+'</div><div style="font-size:11px;color:#8FA3C0;margin-bottom:5px">'+b.industry+'</div>'+(score!==null?'<div style="font-size:12px;color:'+color+';font-weight:600;margin-bottom:5px">'+score+'/100</div>':'')+'<a href="'+b.url+'" target="_blank" style="font-size:11px;color:#D85A30">'+b.url+'</a></div>');
+      infoWindow.open(gmap,marker);selectBiz(b.id);
     });
-
-    marker.addListener('click', () => {
-      infoWindow.setContent(`
-        <div style="color:#E8EDF5;font-family:-apple-system,sans-serif;padding:4px 2px;min-width:180px">
-          <div style="font-weight:600;font-size:13px;margin-bottom:4px">${b.name}</div>
-          <div style="font-size:11px;color:#8FA3C0;margin-bottom:6px">${b.industry} · ${b.location}</div>
-          ${score !== null ? `<div style="font-size:12px;color:${color};font-weight:600;margin-bottom:6px">Score: ${score}/100</div>` : ''}
-          <a href="${b.url}" target="_blank" style="font-size:11px;color:#D85A30">${b.url}</a>
-        </div>
-      `);
-      infoWindow.open(gmap, marker);
-      selectBiz(b.id);
-    });
-
     mapMarkers.push(marker);
   });
-
-  document.getElementById('map-count').textContent = `${businesses.length} businesses`;
+  document.getElementById('map-count').textContent=businesses.length+' businesses';
 }
 
-function selectIndustry(el) {
-  document.querySelectorAll('.ind-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  selectedIndustry = el.dataset.ind;
+function selectIndustry(el){
+  document.querySelectorAll('.ind-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');selectedIndustry=el.dataset.ind;
+  businesses=[];selectedId=null;updateStats();renderList();plotBusinesses();
+  document.getElementById('main-content').innerHTML='<div class="empty-state"><h2>Ready to search</h2><p>Hit Search to find '+selectedIndustry+' businesses.</p></div>';
+  document.getElementById('audit-all-btn').style.display='none';
 }
 
-function setFilter(f, el) {
-  activeFilter = f;
-  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderList();
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.ftab').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');renderList();
 }
 
-async function runSearch() {
-  const location = document.getElementById('location-input').value.trim() || 'Puerto Vallarta';
-  const btn = document.getElementById('search-btn');
-  btn.disabled = true;
-  btn.textContent = 'Searching...';
-
-  try {
-    const res = await fetch(`${API}/api/search`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ industry: selectedIndustry, location, radius: searchRadius })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    businesses = data.results || [];
-    updateStats();
-    renderList();
-    plotBusinesses();
-    document.getElementById('audit-all-btn').style.display = '';
-    document.getElementById('main-content').innerHTML = `<div class="notice">Found <strong>${businesses.length}</strong> ${selectedIndustry} businesses in ${location} within ${searchRadius}km. Click <strong>Audit all pending</strong> to score them all, or select one from the sidebar.</div>`;
-    document.getElementById('main-title').textContent = 'Lead Audit Tool';
-    document.getElementById('main-subtitle').textContent = `${businesses.length} ${selectedIndustry} businesses found · ${location}`;
-  } catch (e) {
-    alert('Search failed: ' + e.message);
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Search businesses';
+function runSearch(){
+  var location=document.getElementById('location-input').value.trim()||'Puerto Vallarta';
+  var btn=document.getElementById('search-btn');btn.disabled=true;btn.textContent='Searching...';
+  fetch(API+'/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({industry:selectedIndustry,location:location,radius:searchRadius})})
+  .then(function(r){return r.json();}).then(function(data){
+    if(data.error)throw new Error(data.error);
+    businesses=data.results||[];updateStats();renderList();plotBusinesses();
+    document.getElementById('audit-all-btn').style.display='';
+    document.getElementById('main-content').innerHTML='<div class="notice">Found <strong>'+businesses.length+'</strong> '+selectedIndustry+' businesses in '+location+' ('+searchRadius+'km). Click Audit all pending to score them.</div>';
+    document.getElementById('main-title').textContent='Lead Audit Tool';
+    document.getElementById('main-subtitle').textContent=businesses.length+' '+selectedIndustry+' found in '+location;
+  }).catch(function(e){alert('Search failed: '+e.message);})
+  .finally(function(){btn.disabled=false;btn.textContent='Search businesses';});
 }
 
-async function loadBusinesses() {
-  try {
-    const res = await fetch(`${API}/api/businesses`);
-    const data = await res.json();
-    businesses = Array.isArray(data) ? data : [];
-    updateStats();
-    renderList();
-    plotBusinesses();
-  } catch {}
+function loadBusinesses(){
+  fetch(API+'/api/businesses').then(function(r){return r.json();}).then(function(data){
+    businesses=Array.isArray(data)?data:[];updateStats();renderList();plotBusinesses();
+  }).catch(function(){});
 }
 
-function updateStats() {
-  document.getElementById('stat-total').textContent = businesses.length;
-  document.getElementById('stat-audited').textContent = businesses.filter(b => b.audit).length;
-  document.getElementById('stat-weak').textContent = businesses.filter(b => b.status === 'weak').length;
-  document.getElementById('map-count').textContent = `${businesses.length} businesses`;
+function updateStats(){
+  document.getElementById('stat-total').textContent=businesses.length;
+  document.getElementById('stat-audited').textContent=businesses.filter(function(b){return b.audit;}).length;
+  document.getElementById('stat-weak').textContent=businesses.filter(function(b){return b.status==='weak';}).length;
+  document.getElementById('map-count').textContent=businesses.length+' businesses';
 }
 
-function renderList() {
-  const list = document.getElementById('biz-list');
-  let filtered = businesses;
-  if (activeFilter === 'weak') filtered = businesses.filter(b => b.status === 'weak');
-  if (activeFilter === 'pending') filtered = businesses.filter(b => !b.audit);
-  if (!filtered.length) {
-    list.innerHTML = `<div style="padding:20px;color:var(--text3);font-size:12px;text-align:center">No businesses yet.<br>Run a search to get started.</div>`;
-    return;
-  }
-  list.innerHTML = filtered.map(b => {
-    const score = b.audit ? b.audit.overall_score : null;
-    const pc = b.status === 'weak' ? 'weak' : b.status === 'ok' ? 'ok' : 'pending';
-    return `<div class="biz-item ${selectedId===b.id?'active':''}" onclick="selectBiz('${b.id}')">
-      <div class="biz-item-name">${b.name}</div>
-      <div class="biz-item-meta">
-        <span class="biz-item-ind">${b.industry}</span>
-        <span class="score-pill ${pc}">${score!==null?score+'/100':'Pending'}</span>
-      </div>
-    </div>`;
+function renderList(){
+  var list=document.getElementById('biz-list');
+  var filtered=businesses;
+  if(activeFilter==='weak')filtered=businesses.filter(function(b){return b.status==='weak';});
+  if(activeFilter==='pending')filtered=businesses.filter(function(b){return !b.audit;});
+  if(activeFilter==='saved')filtered=businesses.filter(function(b){return b.saved;});
+  if(!filtered.length){list.innerHTML='<div style="padding:20px;color:var(--text3);font-size:12px;text-align:center">No businesses yet.<br>Run a search to get started.</div>';return;}
+  list.innerHTML=filtered.map(function(b){
+    var score=b.audit?b.audit.overall_score:null;
+    var pc=b.status==='weak'?'weak':b.status==='ok'?'ok':'pending';
+    var star=b.saved?' &#9733;':'';
+    return '<div class="biz-item '+(selectedId===b.id?'active':'')+'" onclick="selectBiz(\''+b.id+'\')"><div class="biz-item-name">'+b.name+star+'</div><div class="biz-item-meta"><span class="biz-item-ind">'+b.industry+'</span><span class="score-pill '+pc+'">'+(score!==null?score+'/100':'Pending')+'</span></div></div>';
   }).join('');
 }
 
-function selectBiz(id) {
-  selectedId = id;
-  activeTab = 'audit';
-  renderList();
-  renderDetail();
+function selectBiz(id){selectedId=id;activeTab='audit';renderList();renderDetail();}
+
+function pkgPrice(p){
+  if(p==='starter')return '$12,000-$18,000 MXN';
+  if(p==='growth')return '$25,000-$40,000 MXN';
+  if(p==='premium')return '$50,000-$80,000 MXN';
+  return 'Custom Quote - TBC';
 }
 
-function renderDetail() {
-  const biz = businesses.find(b => b.id === selectedId);
-  if (!biz) return;
-  document.getElementById('main-title').textContent = biz.name;
-  document.getElementById('main-subtitle').textContent = `${biz.industry} · ${biz.location}`;
-  const content = document.getElementById('main-content');
-  const sc = biz.audit?.overall_score;
-  const col = sc >= 75 ? 'var(--green)' : sc >= 50 ? 'var(--amber)' : 'var(--red)';
-  const scoreLabels = { ux_ui:'UX / UI', lead_generation:'Lead Gen', navigation:'Navigation', mobile:'Mobile' };
+function renderDetail(){
+  var biz=businesses.find(function(b){return b.id===selectedId;});if(!biz)return;
+  document.getElementById('main-title').textContent=biz.name;
+  document.getElementById('main-subtitle').textContent=biz.industry+' - '+biz.location;
+  var content=document.getElementById('main-content');
+  var sc=biz.audit&&biz.audit.overall_score;
+  var col=sc>=75?'var(--green)':sc>=50?'var(--amber)':'var(--red)';
+  var labels={ux_ui:'UX / UI',lead_generation:'Lead Gen',navigation:'Navigation',mobile:'Mobile'};
+  var saveLabel=biz.saved?'&#9733; Saved':'&#9734; Save';
+  var saveColor=biz.saved?'var(--amber)':'var(--text2)';
 
-  let html = `<div class="biz-detail">
-    <div class="detail-header">
-      <div class="detail-title">
-        <h2>${biz.name}</h2>
-        <div class="meta">${biz.industry} · ${biz.location}</div>
-        <a href="${biz.url}" target="_blank">${biz.url} ↗</a>
-      </div>
-      <div class="detail-actions">
-        <button class="btn primary" onclick="auditOne('${biz.id}')">${biz.audit?'Re-audit':'Run audit'}</button>
-        <button class="btn" style="color:var(--red)" onclick="deleteBiz('${biz.id}')">Remove</button>
-      </div>
-    </div>
-    <div class="tab-row">
-      <button class="tab ${activeTab==='audit'?'active':''}" onclick="switchTab('audit')">Audit</button>
-      <button class="tab ${activeTab==='proposal'?'active':''}" onclick="switchTab('proposal')">Proposal</button>
-    </div>`;
+  var html='<div class="biz-detail"><div class="detail-header"><div class="detail-title"><h2>'+biz.name+'</h2><div class="meta">'+biz.industry+' - '+biz.location+'</div><a href="'+biz.url+'" target="_blank">'+biz.url+' &nearr;</a></div>';
+  html+='<div class="detail-actions">';
+  html+='<button class="btn primary" onclick="auditOne(\''+biz.id+'\')">'+( biz.audit?'Re-audit':'Run audit')+'</button>';
+  html+='<button class="btn" onclick="toggleSave(\''+biz.id+'\')" style="color:'+saveColor+'">'+saveLabel+'</button>';
+  html+='<button class="btn" onclick="deleteBiz(\''+biz.id+'\')" style="color:var(--red)">Remove</button>';
+  html+='</div></div>';
+  html+='<div class="tab-row"><button class="tab '+(activeTab==='audit'?'active':'')+'" onclick="switchTab(\'audit\')">Audit</button><button class="tab '+(activeTab==='proposal'?'active':'')+'" onclick="switchTab(\'proposal\')">Proposal</button></div>';
 
-  if (activeTab === 'audit') {
-    if (!biz.audit) {
-      html += `<div class="empty-state" style="padding:40px 0"><h2>Not audited yet</h2><p>Click "Run audit" to score this website.</p></div>`;
+  if(activeTab==='audit'){
+    if(!biz.audit){
+      html+='<div class="empty-state" style="padding:40px 0"><h2>Not audited yet</h2><p>Click Run audit to score this website.</p></div>';
     } else {
-      const a = biz.audit;
-      const status = sc>=75?'Strong':sc>=50?'Average':'Weak — Lead';
-      html += `<div class="score-overview">
-        <div class="big-score">
-          <div class="big-score-num" style="color:${col}">${sc}</div>
-          <div class="big-score-label">/ 100</div>
-          <div class="big-score-status" style="color:${col}">${status}</div>
-        </div>
-        <div class="score-bars">
-          ${Object.entries(a.scores).map(([k,v])=>{
-            const c=v>=75?'#1D9E75':v>=50?'#D4901A':'#D84444';
-            return `<div class="score-bar-row">
-              <div class="score-bar-label">${scoreLabels[k]||k}</div>
-              <div class="score-bar-val" style="color:${c}">${v}</div>
-              <div class="score-bar-track"><div class="score-bar-fill" style="width:${v}%;background:${c}"></div></div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>
-      <div class="summary-box"><h3>Summary</h3><p>${a.summary}</p></div>
-      <div class="revenue-impact"><h3>Revenue Impact</h3><p>${a.revenue_impact}</p></div>
-      <div class="findings-title">Findings (${a.findings.length})</div>
-      ${a.findings.map(f=>`<div class="finding">
-        <div class="finding-header"><div class="finding-title-text">${f.title}</div><span class="priority-badge ${f.priority}">${f.priority}</span></div>
-        <div class="finding-desc">${f.description}</div>
-      </div>`).join('')}`;
+      var a=biz.audit;
+      var status=sc>=75?'Strong':sc>=50?'Average':'Weak - Lead';
+      html+='<div class="score-overview"><div class="big-score"><div class="big-score-num" style="color:'+col+'">'+sc+'</div><div class="big-score-label">/ 100</div><div class="big-score-status" style="color:'+col+'">'+status+'</div></div><div class="score-bars">';
+      Object.entries(a.scores).forEach(function(e){
+        var k=e[0],v=e[1],c=v>=75?'#1D9E75':v>=50?'#D4901A':'#D84444';
+        html+='<div class="score-bar-row"><div class="score-bar-label">'+(labels[k]||k)+'</div><div class="score-bar-val" style="color:'+c+'">'+v+'</div><div class="score-bar-track"><div class="score-bar-fill" style="width:'+v+'%;background:'+c+'"></div></div></div>';
+      });
+      html+='</div></div>';
+      html+='<div class="summary-box"><h3>Summary</h3><p>'+a.summary+'</p></div>';
+      html+='<div class="revenue-impact"><h3>Revenue Impact</h3><p>'+a.revenue_impact+'</p></div>';
+      if(a.recommended_package){
+        var pkgName=a.recommended_package.charAt(0).toUpperCase()+a.recommended_package.slice(1);
+        html+='<div class="pkg-box"><h3>Recommended Package</h3><p><strong>'+pkgName+'</strong> - '+pkgPrice(a.recommended_package)+'<br><span style="font-size:12px;color:var(--text3)">'+(a.package_reasoning||'')+'</span></p></div>';
+      }
+      html+='<div class="findings-title">Findings ('+a.findings.length+')</div>';
+      a.findings.forEach(function(f){
+        html+='<div class="finding"><div class="finding-header"><div class="finding-title-text">'+f.title+'</div><span class="priority-badge '+f.priority+'">'+f.priority+'</span></div><div class="finding-desc">'+f.description+'</div></div>';
+      });
+      var vg=biz.verdict==='good',vb=biz.verdict==='not_good';
+      html+='<div class="verdict-bar">';
+      html+='<button class="btn" onclick="setVerdict(\''+biz.id+'\',\'good\')" style="background:'+(vg?'rgba(29,158,117,0.2)':'var(--surface2)')+';border-color:'+(vg?'var(--green)':'var(--border)')+';color:'+(vg?'var(--green)':'var(--text2)')+'">'+( vg?'&#10003; Good find':'Good find')+'</button>';
+      html+='<button class="btn" onclick="setVerdict(\''+biz.id+'\',\'not_good\')" style="background:'+(vb?'rgba(216,68,68,0.2)':'var(--surface2)')+';border-color:'+(vb?'var(--red)':'var(--border)')+';color:'+(vb?'var(--red)':'var(--text2)')+'">'+( vb?'&#10007; Not a fit':'Not a good fit')+'</button>';
+      html+='</div>';
     }
   } else {
-    html += `<div class="lang-toggle">
-      <button class="lang-btn ${proposalLang==='English'?'active':''}" onclick="setLang('English',this)">English</button>
-      <button class="lang-btn ${proposalLang==='Spanish'?'active':''}" onclick="setLang('Spanish',this)">Spanish</button>
-    </div>`;
-    if (!biz.audit) {
-      html += `<div class="notice">Run the audit first before generating a proposal.</div>`;
-    } else if (!biz.proposal) {
-      html += `<button class="btn primary" onclick="generateProposal('${biz.id}')">Generate proposal</button>`;
-    } else {
-      html += `<div class="proposal-box" id="proposal-content">${biz.proposal}</div>
-      <div class="proposal-actions">
-        <button class="btn" onclick="copyProposal()">Copy</button>
-        <button class="btn primary" onclick="generateProposal('${biz.id}')">Regenerate</button>
-      </div>`;
+    html+='<div class="lang-toggle"><button class="lang-btn '+(proposalLang==='English'?'active':'')+'" onclick="setLang(\'English\',this)">English</button><button class="lang-btn '+(proposalLang==='Spanish'?'active':'')+'" onclick="setLang(\'Spanish\',this)">Spanish</button></div>';
+    if(!biz.audit)html+='<div class="notice">Run the audit first.</div>';
+    else if(!biz.proposal)html+='<button class="btn primary" onclick="generateProposal(\''+biz.id+'\')">Generate proposal</button>';
+    else html+='<div class="proposal-box" id="proposal-content">'+biz.proposal+'</div><div class="proposal-actions"><button class="btn" onclick="copyProposal()">Copy</button><button class="btn primary" onclick="generateProposal(\''+biz.id+'\')">Regenerate</button></div>';
+  }
+  html+='</div>';content.innerHTML=html;
+}
+
+function switchTab(tab){activeTab=tab;renderDetail();}
+function setLang(lang,el){proposalLang=lang;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');}
+
+function auditOne(id){
+  var biz=businesses.find(function(b){return b.id===id;});
+  document.getElementById('main-content').innerHTML='<div class="loading"><div class="spinner"></div> Auditing '+(biz?biz.name:'business')+'...</div>';
+  fetch(API+'/api/audit/'+id,{method:'POST'}).then(function(r){return r.json();}).then(function(data){
+    if(data.error)throw new Error(data.error);
+    var idx=businesses.findIndex(function(b){return b.id===id;});
+    if(idx>=0)businesses[idx]=data;
+    updateStats();renderList();plotBusinesses();renderDetail();
+  }).catch(function(e){document.getElementById('main-content').innerHTML='<div style="color:var(--red);padding:20px">Audit failed: '+e.message+'</div>';});
+}
+
+function auditAll(){
+  var pending=businesses.filter(function(b){return !b.audit;});
+  if(!pending.length)return alert('No pending businesses.');
+  if(bulkRunning)return;bulkRunning=true;document.getElementById('audit-all-btn').disabled=true;
+  var done=0;
+  document.getElementById('main-content').innerHTML='<div class="bulk-bar"><p>Auditing <span>'+pending.length+'</span> businesses...</p><div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div><p id="prog-text">0/'+pending.length+'</p></div><div id="audit-log" style="font-size:12px;color:var(--text3);line-height:2"></div>';
+  function next(i){
+    if(i>=pending.length){
+      var wc=businesses.filter(function(b){return b.status==='weak';}).length;
+      var log=document.getElementById('audit-log');if(log)log.innerHTML+='<br><div style="color:var(--coral);font-weight:600">Done! Found '+wc+' potential leads.</div>';
+      bulkRunning=false;document.getElementById('audit-all-btn').disabled=false;return;
     }
-  }
-  html += '</div>';
-  content.innerHTML = html;
-}
-
-function switchTab(tab) { activeTab = tab; renderDetail(); }
-function setLang(lang, el) {
-  proposalLang = lang;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-async function auditOne(id) {
-  const biz = businesses.find(b => b.id === id);
-  document.getElementById('main-content').innerHTML = `<div class="loading"><div class="spinner"></div> Auditing ${biz?.name||'business'}…</div>`;
-  try {
-    const res = await fetch(`${API}/api/audit/${id}`, { method: 'POST' });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    const idx = businesses.findIndex(b => b.id === id);
-    if (idx >= 0) businesses[idx] = data;
-    updateStats(); renderList(); plotBusinesses(); renderDetail();
-  } catch (e) {
-    document.getElementById('main-content').innerHTML = `<div style="color:var(--red);padding:20px">Audit failed: ${e.message}</div>`;
-  }
-}
-
-async function auditAll() {
-  const pending = businesses.filter(b => !b.audit);
-  if (!pending.length) return alert('No pending businesses.');
-  if (bulkRunning) return;
-  bulkRunning = true;
-  document.getElementById('audit-all-btn').disabled = true;
-  let done = 0;
-  document.getElementById('main-content').innerHTML = `<div class="bulk-bar">
-    <p>Auditing <span>${pending.length}</span> businesses…</p>
-    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
-    <p id="prog-text">0/${pending.length}</p>
-  </div><div id="audit-log" style="font-size:12px;color:var(--text3);line-height:2"></div>`;
-
-  for (const biz of pending) {
-    const log = document.getElementById('audit-log');
-    if (log) log.innerHTML += `<div>Auditing <strong style="color:var(--text)">${biz.name}</strong>…</div>`;
-    try {
-      const res = await fetch(`${API}/api/audit/${biz.id}`, { method: 'POST' });
-      const data = await res.json();
-      if (!data.error) {
-        const idx = businesses.findIndex(b => b.id === biz.id);
-        if (idx >= 0) businesses[idx] = data;
-        const c = data.status==='weak'?'var(--red)':'var(--green)';
-        if (log) log.innerHTML += `<div style="padding-left:16px;color:${c}">✓ ${data.audit?.overall_score}/100 — ${data.status==='weak'?'Potential lead':'OK'}</div>`;
-      }
-    } catch {}
-    done++;
-    const p = document.getElementById('prog'); const pt = document.getElementById('prog-text');
-    if (p) p.style.width = `${(done/pending.length)*100}%`;
-    if (pt) pt.textContent = `${done}/${pending.length}`;
-    updateStats(); renderList(); plotBusinesses();
-    await new Promise(r => setTimeout(r, 600));
-  }
-
-  const wc = businesses.filter(b=>b.status==='weak').length;
-  const log = document.getElementById('audit-log');
-  if (log) log.innerHTML += `<br><div style="color:var(--coral);font-weight:600">Done! Found ${wc} potential leads.</div>`;
-  bulkRunning = false;
-  document.getElementById('audit-all-btn').disabled = false;
-}
-
-async function generateProposal(id) {
-  document.getElementById('main-content').innerHTML = `<div class="loading"><div class="spinner"></div> Writing proposal…</div>`;
-  try {
-    const res = await fetch(`${API}/api/proposal/${id}`, {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ language: proposalLang })
+    var biz=pending[i];
+    var log=document.getElementById('audit-log');if(log)log.innerHTML+='<div>Auditing <strong style="color:var(--text)">'+biz.name+'</strong>...</div>';
+    fetch(API+'/api/audit/'+biz.id,{method:'POST'}).then(function(r){return r.json();}).then(function(data){
+      if(!data.error){var idx=businesses.findIndex(function(b){return b.id===biz.id;});if(idx>=0)businesses[idx]=data;var c=data.status==='weak'?'var(--red)':'var(--green)';if(log)log.innerHTML+='<div style="padding-left:16px;color:'+c+'">Check '+data.audit.overall_score+'/100</div>';}
+    }).catch(function(){}).finally(function(){
+      done++;var p=document.getElementById('prog');var pt=document.getElementById('prog-text');
+      if(p)p.style.width=(done/pending.length*100)+'%';if(pt)pt.textContent=done+'/'+pending.length;
+      updateStats();renderList();plotBusinesses();
+      setTimeout(function(){next(i+1);},600);
     });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    const idx = businesses.findIndex(b => b.id === id);
-    if (idx >= 0) businesses[idx] = data.business;
-    renderDetail();
-  } catch (e) { alert('Proposal failed: ' + e.message); }
+  }
+  next(0);
 }
 
-function copyProposal() {
-  const el = document.getElementById('proposal-content');
-  if (el) navigator.clipboard.writeText(el.textContent);
+function generateProposal(id){
+  document.getElementById('main-content').innerHTML='<div class="loading"><div class="spinner"></div> Writing proposal...</div>';
+  fetch(API+'/api/proposal/'+id,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({language:proposalLang})})
+  .then(function(r){return r.json();}).then(function(data){
+    if(data.error)throw new Error(data.error);
+    var idx=businesses.findIndex(function(b){return b.id===id;});if(idx>=0)businesses[idx]=data.business;renderDetail();
+  }).catch(function(e){alert('Proposal failed: '+e.message);});
 }
 
-async function deleteBiz(id) {
-  if (!confirm('Remove this business?')) return;
-  await fetch(`${API}/api/businesses/${id}`, { method: 'DELETE' });
-  businesses = businesses.filter(b => b.id !== id);
-  selectedId = null;
-  updateStats(); renderList(); plotBusinesses();
-  document.getElementById('main-content').innerHTML = '<div class="empty-state"><h2>Removed</h2></div>';
-  document.getElementById('main-title').textContent = 'Lead Audit Tool';
+function copyProposal(){var el=document.getElementById('proposal-content');if(el)navigator.clipboard.writeText(el.textContent);}
+
+function toggleSave(id){
+  var biz=businesses.find(function(b){return b.id===id;});if(!biz)return;
+  var method=biz.saved?'DELETE':'POST';
+  fetch(API+'/api/favourites/'+id,{method:method}).then(function(r){return r.json();}).then(function(data){
+    var idx=businesses.findIndex(function(b){return b.id===id;});
+    if(idx>=0)businesses[idx]=biz.saved?Object.assign({},businesses[idx],{saved:false}):data;
+    renderList();renderDetail();
+  });
 }
 
-async function clearAll() {
-  if (!confirm('Clear all businesses?')) return;
-  await fetch(`${API}/api/businesses`, { method: 'DELETE' });
-  businesses = []; selectedId = null;
-  updateStats(); renderList(); plotBusinesses();
-  document.getElementById('audit-all-btn').style.display = 'none';
-  document.getElementById('main-content').innerHTML = '<div class="empty-state"><div class="icon">🌅</div><h2>All clear</h2><p>Search for businesses to get started.</p></div>';
-  document.getElementById('main-title').textContent = 'Lead Audit Tool';
+function setVerdict(id,verdict){
+  fetch(API+'/api/verdict/'+id,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({verdict:verdict})})
+  .then(function(r){return r.json();}).then(function(data){
+    var idx=businesses.findIndex(function(b){return b.id===id;});if(idx>=0)businesses[idx]=data;
+    if(verdict==='not_good'){
+      businesses=businesses.filter(function(b){return b.id!==id;});selectedId=null;
+      updateStats();renderList();plotBusinesses();
+      document.getElementById('main-content').innerHTML='<div class="notice">Hidden for 30 days. It will not appear in future searches.</div>';
+      document.getElementById('main-title').textContent='Lead Audit Tool';
+    } else {renderList();renderDetail();}
+  });
+}
+
+function deleteBiz(id){
+  if(!confirm('Remove this business?'))return;
+  fetch(API+'/api/businesses/'+id,{method:'DELETE'}).then(function(){
+    businesses=businesses.filter(function(b){return b.id!==id;});selectedId=null;
+    updateStats();renderList();plotBusinesses();
+    document.getElementById('main-content').innerHTML='<div class="empty-state"><h2>Removed</h2></div>';
+    document.getElementById('main-title').textContent='Lead Audit Tool';
+  });
+}
+
+function clearAll(){
+  if(!confirm('Clear all businesses?'))return;
+  fetch(API+'/api/businesses',{method:'DELETE'}).then(function(){
+    businesses=[];selectedId=null;updateStats();renderList();plotBusinesses();
+    document.getElementById('audit-all-btn').style.display='none';
+    document.getElementById('main-content').innerHTML='<div class="empty-state"><div class="icon">&#127749;</div><h2>All clear</h2><p>Search for businesses to get started.</p></div>';
+    document.getElementById('main-title').textContent='Lead Audit Tool';
+  });
 }
 
 initMap();
