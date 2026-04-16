@@ -246,6 +246,14 @@ app.get('/api/favourites', (req, res) => res.json(readFavs()));
 app.get('/api/config', (req, res) => res.json({ mapsKey: process.env.GOOGLE_MAPS_KEY || '' }));
 app.get('/api/businesses', (req, res) => res.json(readDB()));
 app.get('/api/businesses/:id', (req, res) => { const biz = readDB().find(b=>b.id===req.params.id); biz ? res.json(biz) : res.status(404).json({ error: 'Not found' }); });
+
+app.post('/api/business', (req, res) => {
+  const biz = req.body;
+  if (!biz.url) return res.status(400).json({ error: 'url required' });
+  const saved = upsertBusiness(biz);
+  res.json(saved);
+});
+
 app.delete('/api/businesses/:id', (req, res) => { writeDB(readDB().filter(b=>b.id!==req.params.id)); res.json({ ok: true }); });
 app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }); });
 app.get('/{*splat}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
