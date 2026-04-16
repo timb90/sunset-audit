@@ -470,7 +470,7 @@ function addByUrl(){
   var raw=document.getElementById('manual-url').value.trim();
   if(!raw)return;
   var url=raw.startsWith('http')?raw:'https://'+raw;
-  var name=url.replace(/https?://(www.)?/,'').split('/')[0];
+  var name=url.replace(/https?:\/\/(www\.)?/,'').split('/')[0];
   var biz={id:btoa(url+Math.random()).slice(0,20).replace(/[^a-zA-Z0-9]/g,'x'),name:name,url:url,industry:selectedIndustry,location:document.getElementById('location-input').value||'Puerto Vallarta',status:'pending',addedAt:new Date().toISOString()};
   fetch('/api/business',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(biz)})
     .then(r=>r.json()).then(function(saved){
