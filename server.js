@@ -264,8 +264,9 @@ app.patch('/api/businesses/:id/proposal', (req, res) => {
   res.json(db[idx]);
 });
 
+app.delete('/api/businesses/:id', (req, res) => { writeDB(readDB().filter(b=>b.id!==req.params.id)); res.json({ ok: true }); });
+app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }); });
 
-// Find competitors for a business
 app.post('/api/competitors/:id', async (req, res) => {
   const db = readDB();
   const biz = db.find(b => b.id === req.params.id);
@@ -273,56 +274,25 @@ app.post('/api/competitors/:id', async (req, res) => {
   try {
     const { lat, lng, radius, industry } = req.body;
     const placeType = { Hotels:'lodging', Restaurants:'restaurant', Gyms:'gym', Legal:'lawyer', 'Real Estate':'real_estate_agency', Veterinary:'veterinary_care', Transport:'transit_station', Tourism:'tourist_attraction', Other:'establishment' }[industry] || 'establishment';
-    const nearbyResp = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
-      params: { key: process.env.GOOGLE_MAPS_KEY, location: lat+','+lng, radius: radius*1000, type: placeType, keyword: industry }
-    });
-    const places = (nearbyResp.data.results || [])
-      .filter(p => p.business_status === 'OPERATIONAL')
-      .filter(p => p.place_id !== biz.placeId)
-      .slice(0, 6);
-    
+    const nearbyResp = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', { params: { key: process.env.GOOGLE_MAPS_KEY, location: lat+','+lng, radius: radius*1000, type: placeType, keyword: industry } });
+    const places = (nearbyResp.data.results || []).filter(p => p.business_status === 'OPERATIONAL').slice(0, 8);
+    const priceLevels = ['Free','Budget','Mid-range','Upscale','Luxury'];
     const competitors = [];
     for (const place of places) {
       if (competitors.length >= 3) break;
       try {
-        const det = await axios.get('https://maps.googleapis.com/maps/api/place/details/json', {
-          params: { key: process.env.GOOGLE_MAPS_KEY, place_id: place.place_id, fields: 'name,website,formatted_address,rating,price_level' }
-        });
+        const det = await axios.get('https://maps.googleapis.com/maps/api/place/details/json', { params: { key: process.env.GOOGLE_MAPS_KEY, place_id: place.place_id, fields: 'name,website,formatted_address,rating,price_level' } });
         const d = det.data.result || {};
         if (!d.website) continue;
-        const priceLevels = ['Free',', (req, res) => { writeDB(readDB().filter(b=>b.id!==req.params.id)); res.json({ ok: true }); });
-app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }); });
-app.get('/{*splat}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-const PORT = process.env.PORT || 3333;
-console.log('ENV CHECK - GOOGLE_MAPS_KEY:', process.env.GOOGLE_MAPS_KEY ? 'SET ('+process.env.GOOGLE_MAPS_KEY.slice(0,8)+'...)' : 'EMPTY');
-app.listen(PORT, () => console.log('Sunset Audit Tool running at http://localhost:' + PORT));
-,'$','$, (req, res) => { writeDB(readDB().filter(b=>b.id!==req.params.id)); res.json({ ok: true }); });
-app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }); });
-app.get('/{*splat}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-const PORT = process.env.PORT || 3333;
-console.log('ENV CHECK - GOOGLE_MAPS_KEY:', process.env.GOOGLE_MAPS_KEY ? 'SET ('+process.env.GOOGLE_MAPS_KEY.slice(0,8)+'...)' : 'EMPTY');
-app.listen(PORT, () => console.log('Sunset Audit Tool running at http://localhost:' + PORT));
-,'$$'];
         const distKm = distanceKm(lat, lng, place.geometry.location.lat, place.geometry.location.lng);
-        competitors.push({
-          name: d.name || place.name,
-          url: d.website,
-          rating: d.rating || null,
-          priceLevel: priceLevels[d.price_level] || 'N/A',
-          distance: Math.round(distKm * 10) / 10,
-          placeId: place.place_id,
-          audit: null,
-          skipped: false
-        });
+        competitors.push({ name: d.name || place.name, url: d.website, rating: d.rating || null, priceLevel: priceLevels[d.price_level] || 'N/A', distance: Math.round(distKm * 10) / 10, placeId: place.place_id, audit: null, skipped: false });
       } catch(e) {}
     }
-    
     const updated = upsertBusiness({ ...biz, competitors });
     res.json(updated);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Audit a specific competitor
 app.post('/api/competitors/:id/audit/:idx', async (req, res) => {
   const db = readDB();
   const biz = db.find(b => b.id === req.params.id);
@@ -331,16 +301,15 @@ app.post('/api/competitors/:id/audit/:idx', async (req, res) => {
   if (!comp) return res.status(404).json({ error: 'Competitor not found' });
   try {
     const siteContent = await fetchSiteContent(comp.url);
-    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion and UX expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' business website: ' + comp.url + '\nBusiness: ' + comp.name + '\nContent: ' + siteContent + '\n\nReturn ONLY this JSON:\n{"overall_score":0,"summary":"2-3 sentences","scores":{"ux_ui":0,"lead_generation":0,"navigation":0,"mobile":0},"findings":[{"title":"string","priority":"high","description":"string"}]}\n\nScores 0-100, 3-5 findings.' }] });
+    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' website: ' + comp.url + ' Business: ' + comp.name + ' Content: ' + siteContent + ' Return ONLY: {"overall_score":0,"summary":"string","scores":{"ux_ui":0,"lead_generation":0,"navigation":0,"mobile":0},"findings":[{"title":"string","priority":"high","description":"string"}]}' }] });
     const text = msg.content.map(c => c.text || '').join('').trim().replace(/```json|```/g, '');
-    const audit = JSON.parse(text.match(/{[sS]*}/)[0]);
+    const audit = JSON.parse(text.match(/\{[\s\S]*\}/)[0]);
     biz.competitors[parseInt(req.params.idx)].audit = audit;
     const updated = upsertBusiness(biz);
     res.json(updated);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Skip a competitor
 app.post('/api/competitors/:id/skip/:idx', async (req, res) => {
   const db = readDB();
   const biz = db.find(b => b.id === req.params.id);
@@ -349,13 +318,9 @@ app.post('/api/competitors/:id/skip/:idx', async (req, res) => {
     biz.competitors.splice(parseInt(req.params.idx), 1);
     const updated = upsertBusiness(biz);
     res.json(updated);
-  } else {
-    res.status(404).json({ error: 'Competitor not found' });
-  }
+  } else { res.status(404).json({ error: 'Competitor not found' }); }
 });
 
-app.delete('/api/businesses/:id', (req, res) => { writeDB(readDB().filter(b=>b.id!==req.params.id)); res.json({ ok: true }); });
-app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }); });
 app.get('/{*splat}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 const PORT = process.env.PORT || 3333;
 console.log('ENV CHECK - GOOGLE_MAPS_KEY:', process.env.GOOGLE_MAPS_KEY ? 'SET ('+process.env.GOOGLE_MAPS_KEY.slice(0,8)+'...)' : 'EMPTY');
