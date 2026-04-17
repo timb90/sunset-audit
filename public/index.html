@@ -481,6 +481,17 @@ function addByUrl(){
       setTimeout(function(){auditOne(saved.id);},300);
     }).catch(function(e){alert('Error: '+e.message);});
 }
+function currentBizId(){return selectedId;}
+function saveProposalEdit(id){
+  var el=document.getElementById('proposal-content');
+  if(!el||!id)return;
+  var text=el.innerText;
+  fetch('/api/businesses/'+id+'/proposal',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({proposal:text})})
+    .then(function(r){return r.json();}).then(function(data){
+      var idx=businesses.findIndex(function(b){return b.id===id;});
+      if(idx>=0)businesses[idx]=data;
+    }).catch(function(e){console.log('Save failed:',e.message);});
+}
 </script>
 </body>
 </html>

@@ -254,6 +254,16 @@ app.post('/api/business', (req, res) => {
   res.json(saved);
 });
 
+
+app.patch('/api/businesses/:id/proposal', (req, res) => {
+  const db = readDB();
+  const idx = db.findIndex(b => b.id === req.params.id);
+  if (idx < 0) return res.status(404).json({ error: 'Not found' });
+  db[idx].proposal = req.body.proposal;
+  writeDB(db);
+  res.json(db[idx]);
+});
+
 app.delete('/api/businesses/:id', (req, res) => { writeDB(readDB().filter(b=>b.id!==req.params.id)); res.json({ ok: true }); });
 app.delete('/api/businesses', (req, res) => { writeDB([]); res.json({ ok: true }); });
 app.get('/{*splat}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
