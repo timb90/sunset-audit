@@ -195,7 +195,46 @@ app.post('/api/audit/:id', async (req, res) => {
   let siteContent = '';
   try { const resp = await axios.get(biz.url, { timeout: 8000, headers: { 'User-Agent': 'Mozilla/5.0' } }); const cheerio = require('cheerio'); const $ = cheerio.load(resp.data); $('script,style,img,svg,nav,footer').remove(); siteContent = $('body').text().replace(/\s+/g,' ').slice(0,3000); } catch { siteContent = 'Could not fetch. Domain: ' + biz.url + ', Type: ' + biz.industry; }
   try {
-    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion and UX expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' business website: ' + biz.url + '\nBusiness: ' + biz.name + '\nContent: ' + siteContent + '\n\nReturn ONLY this JSON:\n{"overall_score":0,"detected_location":"city/region from website content","summary":"2-3 sentences on how weaknesses hurt revenue","avg_nightly_rate":"extract from site content or estimate based on property type and Puerto Vallarta market rates (hostel=$15-25 USD, budget hotel=$50-80 USD, boutique hotel=$100-200 USD, resort=$200-400 USD)","monthly_bookings_estimate":"estimate realistic monthly bookings for this property size","ota_commission_pct":"typical OTA commission for this property type (hostels=15%, hotels=18-22%, resorts=20-25%)","revenue_impact":"calculate as: monthly_bookings x avg_nightly_rate x ota_commission_pct = monthly OTA cost in USD, then annualise. Show working e.g. 80 bookings x $120/night x 20% commission = $1,920/month = $23,040/year in OTA fees. Be conservative and accurate, not inflated.","recommended_package":"starter|growth|premium|custom","package_reasoning":"1 sentence why","scores":{"ux_ui":0,"lead_generation":0,"navigation":0,"mobile":0},"findings":[{"title":"string","priority":"high","description":"actionable finding with revenue impact"}]}\n\nPackage guide: starter=$12k-18k MXN simple sites, growth=$25k-40k MXN needs booking/integration, premium=$50k-80k MXN full custom, custom=TBC complex systems.\nScores 0-100, priority=high/medium/low, 5-7 findings. For revenue_impact always show the calculation so the client can verify it.' }] });
+    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion and UX expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' business website: ' + biz.url + '\nBusiness: ' + biz.name + '\nContent: ' + siteContent + '\n\nSCORING RUBRIC - apply strictly and consistently:
+
+UX/UI (0-100):
+- Professional design, clear visual hierarchy: +25
+- High quality images, no stock photo feel: +25
+- Fast loading signals (no heavy sliders, optimised images): +25
+- Clear branding, consistent fonts/colours: +25
+DEDUCT: -20 if built on Wix/Squarespace with default template, -15 if cluttered layout, -15 if poor image quality
+
+Lead Generation (0-100):
+- Online booking widget or reservation system on site: +30
+- Contact form present and visible: +20
+- Clear CTA button above the fold: +20
+- Email capture or newsletter signup: +15
+- Live chat or WhatsApp button: +15
+DEDUCT: -30 if no booking system at all, -20 if booking redirects offsite to OTA, -15 if no contact form
+
+Navigation (0-100):
+- Clear main menu with logical structure: +25
+- Mobile hamburger menu works: +25
+- Key pages reachable within 2 clicks: +25
+- No broken links or dead ends: +25
+DEDUCT: -20 if no clear menu, -15 if key info buried, -10 if confusing structure
+
+Mobile (0-100):
+- Fully responsive layout: +30
+- Text readable without zooming: +25
+- Tap targets large enough: +25
+- No horizontal scrolling: +20
+DEDUCT: -30 if not mobile responsive, -20 if text too small, -15 if buttons too small
+
+Overall score = average of all 4 categories.
+
+INDUSTRY ADJUSTMENTS:
+- Hotels/Tourism: Lead Gen weighted +10% (booking is critical)
+- Restaurants: Lead Gen includes online menu and reservation (+20 for each)
+- Legal/Real Estate: Lead Gen focuses on contact form and consultation CTA
+- Gyms: Lead Gen includes class schedule and membership signup
+- Veterinary: Lead Gen includes appointment booking
+- Transport: Lead Gen includes quote/booking form\n\nReturn ONLY this JSON:\n{\"overall_score\":0,\"detected_location\":\"city/region from website content\",\"summary\":\"2-3 sentences on how weaknesses hurt revenue\",\"avg_nightly_rate\":\"extract from site or estimate: hostel=$15-25 USD, budget hotel=$50-80 USD, boutique hotel=$100-200 USD, resort=$200-400 USD, restaurant=avg spend per table, gym=monthly membership\",\"monthly_bookings_estimate\":\"realistic monthly bookings/clients for this business size\",\"ota_commission_pct\":\"OTA commission: hostels=15%, hotels=18-22%, resorts=20-25%, restaurants=0%\",\"revenue_impact\":\"calculate: monthly_volume x avg_value x commission_pct. Show working. Be conservative.\",\"recommended_package\":\"starter|growth|premium|custom\",\"package_reasoning\":\"1 sentence why\",\"scores\":{\"ux_ui\":0,\"lead_generation\":0,\"navigation\":0,\"mobile\":0},\"findings\":[{\"title\":\"string\",\"priority\":\"high\",\"description\":\"actionable finding with revenue impact\"}]}\n\nPackage guide: starter=$12k-18k MXN, growth=$25k-40k MXN, premium=$50k-80k MXN, custom=TBC.\nUse the rubric strictly. overall_score = average of 4 category scores. 5-7 findings.' }] });
     const text = msg.content.filter(c=>c.type==='text').map(c=>c.text).join('').trim();
     const match = text.replace(/```json|```/g,'').match(/\{[\s\S]*\}/);
     if (!match) throw new Error('No JSON');
@@ -301,7 +340,7 @@ app.post('/api/competitors/:id/audit/:idx', async (req, res) => {
   if (!comp) return res.status(404).json({ error: 'Competitor not found' });
   try {
     const siteContent = await fetchSiteContent(comp.url);
-    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' website: ' + comp.url + ' Business: ' + comp.name + ' Content: ' + siteContent + ' Return ONLY: {"overall_score":0,"summary":"string","scores":{"ux_ui":0,"lead_generation":0,"navigation":0,"mobile":0},"findings":[{"title":"string","priority":"high","description":"string"}]}' }] });
+    const msg = await client.messages.create({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, system: 'You are a web conversion expert. Return ONLY raw JSON, no markdown.', messages: [{ role: 'user', content: 'Audit this ' + biz.industry + ' website: ' + comp.url + ' Business: ' + comp.name + ' Content: ' + siteContent + ' Use this strict rubric: UX/UI: professional design+25, quality images+25, fast loading+25, clear branding+25, deduct -20 Wix/default template, -15 cluttered. Lead Gen: booking widget+30, contact form+20, CTA above fold+20, email capture+15, WhatsApp+15, deduct -30 no booking, -20 offsite booking. Navigation: clear menu+25, mobile menu+25, 2-click access+25, no broken links+25. Mobile: responsive+30, readable text+25, tap targets+25, no horizontal scroll+20. overall_score = average of 4 scores. Return ONLY: {"overall_score":0,"summary":"string","scores":{"ux_ui":0,"lead_generation":0,"navigation":0,"mobile":0},"findings":[{"title":"string","priority":"high","description":"string"}]}' }] });
     const text = msg.content.map(c => c.text || '').join('').trim().replace(/```json|```/g, '');
     const audit = JSON.parse(text.match(/\{[\s\S]*\}/)[0]);
     biz.competitors[parseInt(req.params.idx)].audit = audit;
