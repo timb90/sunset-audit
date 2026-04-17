@@ -332,9 +332,11 @@ function renderDetail(){
   html+='<button class="btn" onclick="toggleSave(\''+biz.id+'\')" style="color:'+saveColor+'">'+saveLabel+'</button>';
   html+='<button class="btn" onclick="deleteBiz(\''+biz.id+'\')" style="color:var(--red)">Remove</button>';
   html+='</div></div>';
-  html+='<div class="tab-row"><button class="tab '+(activeTab==='audit'?'active':'')+'" onclick="switchTab(\'audit\')">Audit</button><button class="tab '+(activeTab==='proposal'?'active':'')+'" onclick="switchTab(\'proposal\')">Proposal</button></div>';
+  html+='<div class="tab-row"><button class="tab '+(activeTab==='audit'?'active':'')+'" onclick="switchTab(\'audit\')">Audit</button><button class="tab '+(activeTab==='proposal'?'active':'')+'" onclick="switchTab(\'proposal\')">Proposal</button><button class="tab '+(activeTab==='competitors'?'active':'')+'" onclick="switchTab(\'competitors\')">Competitors</button></div>';
 
-  if(activeTab==='audit'){
+  if(activeTab==='competitors'){
+    html+=renderCompetitors(biz);
+  } else if(activeTab==='audit'){
     if(!biz.audit){
       html+='<div class="empty-state" style="padding:40px 0"><h2>Not audited yet</h2><p>Click Run audit to score this website.</p></div>';
     } else {
@@ -372,6 +374,128 @@ function renderDetail(){
 }
 
 function switchTab(tab){activeTab=tab;renderDetail();}
+
+function renderCompetitors(biz){
+  var html='';
+  var comps=biz.competitors||[];
+  // Show find competitors button if audit exists
+  if(biz.audit){
+    html+='<button class="btn primary" style="margin-bottom:16px" onclick="findCompetitors(\''+biz.id+'\')">Find nearby competitors</button>';
+  } else {
+    html+='<div class="notice">Run the audit first to find competitors.</div>';
+    return html;
+  }
+  if(comps.length===0){
+    html+='<div class="notice">No competitors found yet. Click the button above to search.</div>';
+    return html;
+  }
+  // Show competitor cards
+  comps.forEach(function(c,i){
+    var scored=c.audit;
+    var sc=scored?scored.overall_score:null;
+    var col=sc>=75?'#1D9E75':sc>=50?'#D4901A':'#D84444';
+    html+='<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:12px;border:1px solid var(--border)">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html+='<div><div style="font-weight:600;font-size:14px">'+c.name+'</div>';
+    html+='<div style="font-size:11px;color:var(--text-muted)">'+c.distance+'km away · '+c.priceLevel+' · ⭐ '+(c.rating||'N/A')+'</div></div>';
+    if(sc!==null){
+      html+='<div style="font-size:22px;font-weight:700;color:'+col+'">'+sc+'/100</div>';
+    }
+    html+='</div>';
+    html+='<div style="font-size:11px;margin-bottom:10px"><a href="'+c.url+'" target="_blank" style="color:var(--coral)">'+c.url+'</a></div>';
+    if(!c.audit){
+      html+='<button class="btn primary" onclick="auditCompetitor(\''+biz.id+'\','+i+')">Audit this competitor</button>';
+      html+='<button class="btn" style="margin-left:6px" onclick="skipCompetitor(\''+biz.id+'\','+i+')">Skip</button>';
+    } else {
+      // Show score breakdown
+      html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">';
+      Object.entries(c.audit.scores).forEach(function(e){
+        var k=e[0],v=e[1];
+        var pc=v>=75?'#1D9E75':v>=50?'#D4901A':'#D84444';
+        // Compare with main biz
+        var mainScore=biz.audit.scores[k]||0;
+        var diff=v-mainScore;
+        var diffStr=diff>0?'<span style="color:#1D9E75">+'+diff+'</span>':diff<0?'<span style="color:#D84444">'+diff+'</span>':'<span style="color:#aaa">0</span>';
+        html+='<div style="background:var(--surface);padding:6px 8px;border-radius:4px;font-size:11px"><span style="color:var(--text-muted)">'+k.replace('_',' ')+'</span><br><span style="color:'+pc+';font-weight:700">'+v+'</span> vs '+mainScore+' '+diffStr+'</div>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  // Show comparison table if any audited
+  var audited=comps.filter(function(c){return c.audit;});
+  if(audited.length>0&&biz.audit){
+    html+='<div style="margin-top:16px"><h3 style="margin-bottom:10px">Head-to-head comparison</h3>';
+    html+='<table style="width:100%;border-collapse:collapse;font-size:12px">';
+    html+='<tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px">Metric</th><th style="text-align:center;padding:6px;color:var(--coral)">'+biz.name.split(' ')[0]+'</th>';
+    audited.forEach(function(c){html+='<th style="text-align:center;padding:6px">'+c.name.split(' ')[0]+'</th>';});
+    html+='</tr>';
+    var metrics=['overall_score'].concat(Object.keys(biz.audit.scores));
+    metrics.forEach(function(m){
+      html+='<tr style="border-bottom:1px solid var(--border)">';
+      html+='<td style="padding:6px;color:var(--text-muted)">'+m.replace('_',' ')+'</td>';
+      var mainVal=m==='overall_score'?biz.audit.overall_score:biz.audit.scores[m];
+      var allVals=[mainVal].concat(audited.map(function(c){return m==='overall_score'?c.audit.overall_score:c.audit.scores[m];}));
+      var maxVal=Math.max.apply(null,allVals);
+      html+='<td style="text-align:center;padding:6px;font-weight:700;color:'+(mainVal===maxVal?'#1D9E75':'var(--text)')+'">'+mainVal+'</td>';
+      audited.forEach(function(c){
+        var v=m==='overall_score'?c.audit.overall_score:c.audit.scores[m];
+        html+='<td style="text-align:center;padding:6px;font-weight:700;color:'+(v===maxVal?'#1D9E75':'var(--text)')+'">'+v+'</td>';
+      });
+      html+='</tr>';
+    });
+    html+='</table>';
+    html+='<button class="btn" style="margin-top:12px;width:100%" onclick="addComparisonToProposal(\''+biz.id+'\')">Add comparison to proposal</button>';
+    html+='</div>';
+  }
+  return html;
+}
+
+function findCompetitors(id){
+  var biz=businesses.find(function(b){return b.id===id;});
+  if(!biz)return;
+  var btn=event.target;btn.disabled=true;btn.textContent='Searching...';
+  fetch('/api/competitors/'+id,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({industry:biz.industry,lat:biz.searchLat,lng:biz.searchLng,radius:biz.radius||10})})
+    .then(function(r){return r.json();}).then(function(data){
+      var idx=businesses.findIndex(function(b){return b.id===id;});
+      if(idx>=0)businesses[idx]=data;
+      renderDetail();
+    }).catch(function(e){alert('Error: '+e.message);btn.disabled=false;btn.textContent='Find nearby competitors';});
+}
+
+function auditCompetitor(bizId,compIdx){
+  fetch('/api/competitors/'+bizId+'/audit/'+compIdx,{method:'POST'})
+    .then(function(r){return r.json();}).then(function(data){
+      var idx=businesses.findIndex(function(b){return b.id===bizId;});
+      if(idx>=0)businesses[idx]=data;
+      renderDetail();
+    }).catch(function(e){alert('Audit failed: '+e.message);});
+}
+
+function skipCompetitor(bizId,compIdx){
+  fetch('/api/competitors/'+bizId+'/skip/'+compIdx,{method:'POST'})
+    .then(function(r){return r.json();}).then(function(data){
+      var idx=businesses.findIndex(function(b){return b.id===bizId;});
+      if(idx>=0)businesses[idx]=data;
+      renderDetail();
+    }).catch(function(e){console.log(e);});
+}
+
+function addComparisonToProposal(bizId){
+  var biz=businesses.find(function(b){return b.id===bizId;});
+  if(!biz||!biz.competitors)return;
+  var audited=biz.competitors.filter(function(c){return c.audit;});
+  if(audited.length===0)return;
+  var table='\n\n--- COMPETITOR COMPARISON ---\n';
+  table+='Your site score: '+biz.audit.overall_score+'/100\n';
+  audited.forEach(function(c){table+=c.name+': '+c.audit.overall_score+'/100\n';});
+  table+='\nYour site outperforms competitors in: ';
+  var wins=Object.keys(biz.audit.scores).filter(function(k){return audited.every(function(c){return biz.audit.scores[k]>=(c.audit.scores[k]||0);});});
+  table+=wins.length>0?wins.join(', '):'areas needing improvement';
+  var el=document.getElementById('proposal-content');
+  if(el){el.innerText+=table;saveProposalEdit(bizId);}
+  else{alert('Generate the proposal first, then add comparison.');}
+}
 function setLang(lang,el){proposalLang=lang;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');}
 
 function auditOne(id){
